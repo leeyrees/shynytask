@@ -10,6 +10,17 @@
 library(shiny)
 library(Stat2Data)
 library(tidyverse)
+library(ggcorrplot)
+library(shinythemes)
+data("Cereal")
+corr = cor(Cereal[,2:4])
+infoPanel<- tabPanel(title = "About this Shiny",
+                     mainPanel(p("In this shiny app we will present the data of the data set Cereal.
+                                 This data set contains four variables: the brand of the Cereal, 
+                                 the calories per serving, grams of sugar per serving and grams of fiber per serving.
+                                 We will be able to explore the data by selecting one or more brands and see their characteristics, 
+                                 as well as see the data graphically.")))
+                     
 dataPanel <- tabPanel("Data",
                       selectInput(
                           inputId = "selCereal",
@@ -19,17 +30,24 @@ dataPanel <- tabPanel("Data",
                       ),
                       tableOutput("data")
 )
-data("Cereal")
+plotPanel <- tabPanel("Plot",
+                      plotOutput("plot")
+)
+
 
 # Define UI for application that draws a histogram
 ui <- navbarPage("shiny App",
-                 dataPanel
+                 theme = shinytheme("united"),
+                 infoPanel,
+                 dataPanel,
+                 plotPanel
 )
 
 
 # Define server logic required to draw a histogram
 server <- function(input, output) { 
     output$data <- renderTable(Cereal %>% filter(Cereal %in% input$selCereal))
+    
 }
 
 # Run the application 
